@@ -1,0 +1,73 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String   @unique
+  name      String?
+  imageUrl  String?
+  tier      String   @default("free") // free, pro
+  tokensUsed Int     @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  workflows     Workflow[]
+  executionLogs ExecutionLog[]
+
+  @@map("users")
+}
+
+model Workflow {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  data        Json     // React Flow data
+  isPublic    Boolean  @default(false)
+  ownerId     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  owner         User           @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  executionLogs ExecutionLog[]
+
+  @@map("workflows")
+}
+
+model NodeTemplate {
+  id          String   @id @default(cuid())
+  name        String
+  type        String   // trigger, action, transform
+  category    String   // email, webhook, database, etc.
+  icon        String?
+  description String?
+  config      Json     // Default configuration
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("node_templates")
+}
+
+model ExecutionLog {
+  id         String   @id @default(cuid())
+  workflowId String
+  userId     String
+  status     String   // pending, success, error
+  input      Json?
+  output     Json?
+  error      String?
+  duration   Int?     // milliseconds
+  createdAt  DateTime @default(now())
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("execution_logs")
+}
