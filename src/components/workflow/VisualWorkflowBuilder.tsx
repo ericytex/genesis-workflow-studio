@@ -4,11 +4,11 @@ import { useNodesState, useEdgesState, addEdge, Connection, Edge, Node } from '@
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Save, Play, Download, Upload, Trash2 } from 'lucide-react'
+import { Save, Play, Download, Upload, Trash2, Circle } from 'lucide-react'
 import { BuilderCanvas } from './BuilderCanvas'
 import { NodePanel } from './NodePanel'
 import { NodeEditor } from './NodeEditor'
-import { WorkflowNode, WorkflowData, NodeTemplate } from '@/types/workflow'
+import { WorkflowNode, WorkflowData, WorkflowEdge, NodeTemplate } from '@/types/workflow'
 import toast from 'react-hot-toast'
 
 const initialNodes: Node[] = []
@@ -34,9 +34,13 @@ export function VisualWorkflowBuilder({
   const [workflowName, setWorkflowName] = useState(initialWorkflow?.name || 'Untitled Workflow')
   const [selectedNode, setSelectedNode] = useState<WorkflowNode | null>(null)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 
   const onConnect = useCallback(
-    (params: Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Connection) => {
+      setEdges((eds) => addEdge(params, eds))
+      setHasUnsavedChanges(true)
+    },
     [setEdges]
   )
 
@@ -55,6 +59,7 @@ export function VisualWorkflowBuilder({
       }
 
       setNodes((nds) => nds.concat(newNode))
+      setHasUnsavedChanges(true)
       toast.success(`Added ${template.label} node`)
     },
     [setNodes]
@@ -70,6 +75,7 @@ export function VisualWorkflowBuilder({
       setNodes((nds) =>
         nds.map((node) => (node.id === updatedNode.id ? updatedNode : node))
       )
+      setHasUnsavedChanges(true)
       toast.success('Node updated successfully')
     },
     [setNodes]
@@ -87,7 +93,7 @@ export function VisualWorkflowBuilder({
       onSave(workflowData)
     }
 
-    // Also log to console for development
+    setHasUnsavedChanges(false)
     console.log('Saved workflow:', workflowData)
     toast.success('Workflow saved successfully')
   }, [workflowName, nodes, edges, onSave])
@@ -112,6 +118,7 @@ export function VisualWorkflowBuilder({
     setNodes([])
     setEdges([])
     setWorkflowName('Untitled Workflow')
+    setHasUnsavedChanges(false)
     toast.success('Workflow cleared')
   }, [setNodes, setEdges])
 
@@ -142,22 +149,46 @@ export function VisualWorkflowBuilder({
       {/* Left Sidebar - Node Panel */}
       <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
         <div className="p-4">
-          <div className="mb-4">
+          <NodePanel />
+        </div>
+      </div>
+
+      {/* Main Canvas Area */}
+      <div className="flex-1 flex flex-col">
+        {/* Top Bar - n8n style */}
+        <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <Input
               value={workflowName}
-              onChange={(e) => setWorkflowName(e.target.value)}
-              className="text-lg font-semibold"
+              onChange={(e) => {
+                setWorkflowName(e.target.value)
+                setHasUnsavedChanges(true)
+              }}
+              className="text-lg font-semibold border-none bg-transparent px-0 focus-visible:ring-0"
               placeholder="Workflow name"
             />
+            
+            <div className="flex items-center gap-2">
+              <Circle className={`h-2 w-2 fill-current ${hasUnsavedChanges ? 'text-orange-500' : 'text-green-500'}`} />
+              <span className="text-sm text-gray-600">
+                {hasUnsavedChanges ? 'Unsaved changes' : 'Saved'}
+              </span>
+            </div>
           </div>
 
-          <div className="flex flex-col gap-2 mb-6">
-            <div className="flex gap-2">
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="bg-gray-50">
+              {nodes.length} nodes
+            </Badge>
+            <Badge variant="outline" className="bg-gray-50">
+              {edges.length} connections
+            </Badge>
+            
+            <div className="flex gap-2 ml-4">
               <Button 
                 onClick={handleSaveWorkflow}
                 variant="outline"
                 size="sm"
-                className="flex-1"
               >
                 <Save className="h-4 w-4 mr-2" />
                 Save
@@ -165,22 +196,17 @@ export function VisualWorkflowBuilder({
               
               <Button 
                 onClick={handleExecuteWorkflow}
-                variant="outline"
                 size="sm"
-                className="flex-1"
                 disabled={nodes.length === 0}
               >
                 <Play className="h-4 w-4 mr-2" />
                 Execute
               </Button>
-            </div>
 
-            <div className="flex gap-2">
               <Button 
                 onClick={handleExportWorkflow}
                 variant="outline"
                 size="sm"
-                className="flex-1"
                 disabled={nodes.length === 0}
               >
                 <Download className="h-4 w-4 mr-2" />
@@ -191,7 +217,6 @@ export function VisualWorkflowBuilder({
                 onClick={handleClearWorkflow}
                 variant="outline"
                 size="sm"
-                className="flex-1 text-red-600 hover:text-red-700"
                 disabled={nodes.length === 0}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
@@ -199,31 +224,20 @@ export function VisualWorkflowBuilder({
               </Button>
             </div>
           </div>
-
-          <NodePanel />
-        </div>
-      </div>
-
-      {/* Main Canvas */}
-      <div className="flex-1 relative">
-        <div className="absolute top-4 right-4 z-10 flex gap-2">
-          <Badge variant="outline" className="bg-white">
-            {nodes.length} nodes
-          </Badge>
-          <Badge variant="outline" className="bg-white">
-            {edges.length} connections
-          </Badge>
         </div>
 
-        <BuilderCanvas
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          onNodeClick={handleNodeClick}
-          onDrop={handleNodeDrop}
-        />
+        {/* Canvas */}
+        <div className="flex-1 relative">
+          <BuilderCanvas
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={handleNodeClick}
+            onDrop={handleNodeDrop}
+          />
+        </div>
       </div>
 
       {/* Node Editor Modal */}

@@ -4,19 +4,15 @@ import {
   ReactFlow,
   Controls,
   Background,
-  useNodesState,
-  useEdgesState,
-  addEdge,
-  Connection,
-  Edge,
-  Node,
   MiniMap,
   OnConnect,
   OnNodesChange,
   OnEdgesChange,
+  Node,
+  Edge,
 } from '@xyflow/react'
 import WorkflowNode from './WorkflowNode'
-import { WorkflowNode as WNode, WorkflowEdge, NodeTemplate } from '@/types/workflow'
+import { NodeTemplate } from '@/types/workflow'
 
 const nodeTypes = {
   workflow: WorkflowNode,

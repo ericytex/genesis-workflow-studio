@@ -45,12 +45,12 @@ export default function WorkflowNode({ data, selected }: NodeProps) {
           </div>
         </div>
         <CardTitle className="text-sm font-medium leading-tight">
-          {data.label}
+          {String(data.label || 'Untitled')}
         </CardTitle>
       </CardHeader>
       
       <CardContent className="pt-0">
-        <p className="text-xs text-gray-600 mb-2">{data.description}</p>
+        <p className="text-xs text-gray-600 mb-2">{String(data.description || '')}</p>
         
         {/* Configuration preview */}
         {data.config && Object.keys(data.config).length > 0 && (

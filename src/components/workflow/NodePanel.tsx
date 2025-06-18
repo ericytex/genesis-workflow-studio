@@ -7,7 +7,13 @@ import {
   Play, 
   Brain, 
   GitBranch,
-  Palette
+  Palette,
+  Webhook,
+  Clock,
+  Mail,
+  Send,
+  Globe,
+  Database
 } from 'lucide-react'
 import { NodeTemplate } from '@/types/workflow'
 
@@ -17,6 +23,7 @@ const nodeTemplates: NodeTemplate[] = [
     label: 'Webhook',
     description: 'Starts workflow on HTTP request',
     icon: 'webhook',
+    category: 'webhook',
     defaultConfig: { url: '', method: 'POST' },
     color: 'bg-green-100 text-green-800 border-green-200',
   },
@@ -25,6 +32,7 @@ const nodeTemplates: NodeTemplate[] = [
     label: 'Schedule',
     description: 'Time-based trigger',
     icon: 'clock',
+    category: 'schedule',
     defaultConfig: { cron: '0 9 * * *', timezone: 'UTC' },
     color: 'bg-green-100 text-green-800 border-green-200',
   },
@@ -33,6 +41,7 @@ const nodeTemplates: NodeTemplate[] = [
     label: 'Send Email',
     description: 'Send email notification',
     icon: 'mail',
+    category: 'email',
     defaultConfig: { to: '', subject: '', body: '' },
     color: 'bg-blue-100 text-blue-800 border-blue-200',
   },
@@ -41,6 +50,7 @@ const nodeTemplates: NodeTemplate[] = [
     label: 'HTTP Request',
     description: 'Make API call',
     icon: 'globe',
+    category: 'http',
     defaultConfig: { url: '', method: 'GET', headers: {} },
     color: 'bg-blue-100 text-blue-800 border-blue-200',
   },
@@ -49,6 +59,7 @@ const nodeTemplates: NodeTemplate[] = [
     label: 'Text Generation',
     description: 'Generate text with AI',
     icon: 'brain',
+    category: 'llm',
     defaultConfig: { prompt: '', model: 'gpt-4' },
     color: 'bg-purple-100 text-purple-800 border-purple-200',
   },
@@ -57,6 +68,7 @@ const nodeTemplates: NodeTemplate[] = [
     label: 'Data Analysis',
     description: 'Analyze data with AI',
     icon: 'chart',
+    category: 'analysis',
     defaultConfig: { data: '', analysis_type: 'summary' },
     color: 'bg-purple-100 text-purple-800 border-purple-200',
   },
@@ -65,6 +77,7 @@ const nodeTemplates: NodeTemplate[] = [
     label: 'If/Else',
     description: 'Conditional branching',
     icon: 'branch',
+    category: 'logic',
     defaultConfig: { condition: '', operator: 'equals', value: '' },
     color: 'bg-orange-100 text-orange-800 border-orange-200',
   },
@@ -75,6 +88,16 @@ const typeIcons = {
   action: Play,
   ai: Brain,
   condition: GitBranch,
+}
+
+const iconMap = {
+  webhook: Webhook,
+  clock: Clock,
+  mail: Mail,
+  globe: Globe,
+  brain: Brain,
+  chart: Database,
+  branch: GitBranch,
 }
 
 const typeColors = {
@@ -121,7 +144,7 @@ export function NodePanel() {
             </CardHeader>
             <CardContent className="space-y-2">
               {templates.map((template, index) => {
-                const TypeIcon = typeIcons[template.type]
+                const TemplateIcon = iconMap[template.icon as keyof typeof iconMap] || typeIcons[template.type]
                 return (
                   <div
                     key={`${template.type}-${index}`}
@@ -130,7 +153,7 @@ export function NodePanel() {
                     onDragStart={(event) => onDragStart(event, template)}
                   >
                     <div className={`p-1.5 rounded ${template.color}`}>
-                      <TypeIcon className="h-4 w-4" />
+                      <TemplateIcon className="h-4 w-4" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{template.label}</p>

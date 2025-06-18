@@ -4,6 +4,7 @@ export interface WorkflowNode {
   type: 'trigger' | 'action' | 'ai' | 'condition'
   position: { x: number; y: number }
   data: {
+    type: 'trigger' | 'action' | 'ai' | 'condition'
     label: string
     config: Record<string, any>
     category?: string
@@ -34,4 +35,5 @@ export interface NodeTemplate {
   icon: string
   defaultConfig: Record<string, any>
   color: string
+  category: string
 }

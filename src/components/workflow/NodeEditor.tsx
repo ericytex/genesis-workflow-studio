@@ -73,8 +73,8 @@ export function NodeEditor({ node, isOpen, onClose, onSave }: NodeEditorProps) {
 
   if (!node) return null
 
-  const Icon = nodeIcons[node.data.type as keyof typeof nodeIcons]
-  const colorClass = nodeColors[node.data.type as keyof typeof nodeColors]
+  const Icon = nodeIcons[node.data.type]
+  const colorClass = nodeColors[node.data.type]
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
