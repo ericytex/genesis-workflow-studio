@@ -8,7 +8,7 @@ import { BuilderCanvas } from './BuilderCanvas'
 import { NodePanel } from './NodePanel'
 import { NodeEditor } from './NodeEditor'
 import { ExecutionPanel } from './ExecutionPanel'
-import { WorkflowNode, WorkflowData, WorkflowMeta, NodeTemplate, WorkflowExecution } from '@/types/workflow'
+import { WorkflowNode, WorkflowData, WorkflowMeta, NodeTemplate, WorkflowExecution, WorkflowEdge } from '@/types/workflow'
 
 interface VisualWorkflowBuilderProps {
   initialWorkflow?: WorkflowData
@@ -29,12 +29,12 @@ export function VisualWorkflowBuilder({
     tags: []
   })
 
-  // React Flow state
-  const [nodes, setNodes, onNodesChange] = useNodesState(
+  // React Flow state - use standard Node and Edge types
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>(
     initialWorkflow?.nodes.map(n => ({ ...n, type: n.data.type })) || []
   )
-  const [edges, setEdges, onEdgesChange] = useEdgesState(
-    initialWorkflow?.edges || []
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(
+    initialWorkflow?.edges.map(e => ({ ...e, type: e.type || 'smoothstep', animated: e.animated || true })) || []
   )
 
   // UI state
@@ -255,10 +255,7 @@ export function VisualWorkflowBuilder({
 
   const handleExportWorkflow = useCallback(() => {
     const workflowData: WorkflowData = {
-      meta: {
-        ...workflow,
-        exportedAt: new Date().toISOString(),
-      },
+      meta: workflow,
       nodes: nodes as WorkflowNode[],
       edges: edges as WorkflowEdge[],
     }

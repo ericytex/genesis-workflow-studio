@@ -17,7 +17,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Map, Grid3X3, Eye, EyeOff } from 'lucide-react'
+import { Map, Grid3X3 } from 'lucide-react'
 import { TriggerNode } from './nodes/TriggerNode'
 import { ActionNode } from './nodes/ActionNode'
 import { AiNode } from './nodes/AiNode'
@@ -106,10 +106,8 @@ export function BuilderCanvas({
     }
   }, [onCanvasClick])
 
-  // Auto-arrange nodes (basic implementation)
   const autoArrange = useCallback(() => {
     console.log('Auto-arrange feature - would implement dagre/elk layout here')
-    // In a real implementation, you'd use dagre or elk to auto-layout the nodes
   }, [])
 
   return (
@@ -148,11 +146,9 @@ export function BuilderCanvas({
         <Controls 
           position="bottom-right"
           style={{
-            button: {
-              backgroundColor: 'white',
-              border: '1px solid #e5e7eb',
-              color: '#374151'
-            }
+            backgroundColor: 'white',
+            border: '1px solid #e5e7eb',
+            color: '#374151'
           }}
         />
         
@@ -189,7 +185,6 @@ export function BuilderCanvas({
           color="#e5e7eb"
         />
 
-        {/* Canvas Controls Panel */}
         <Panel position="top-right" className="bg-white border rounded-lg p-3 shadow-sm">
           <div className="space-y-3 min-w-[200px]">
             <div className="flex items-center justify-between">
@@ -241,7 +236,6 @@ export function BuilderCanvas({
           </div>
         </Panel>
 
-        {/* Empty State */}
         {nodes.length === 0 && (
           <Panel position="top-center" className="pointer-events-none">
             <div className="bg-white/90 backdrop-blur-sm border rounded-lg p-6 text-center shadow-sm">

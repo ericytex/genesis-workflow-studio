@@ -144,7 +144,7 @@ const typeColors = {
 }
 
 interface NodePanelProps {
-  onAddNode?: (template: NodeTemplate) => void
+  onAddNode?: (template: NodeTemplate, position: { x: number; y: number }) => void
 }
 
 export function NodePanel({ onAddNode }: NodePanelProps) {
@@ -246,7 +246,7 @@ export function NodePanel({ onAddNode }: NodePanelProps) {
                       className="flex items-center gap-3 p-3 rounded-md border border-gray-200 cursor-move hover:bg-gray-50 hover:border-gray-300 transition-all group"
                       draggable
                       onDragStart={(event) => onDragStart(event, template)}
-                      onClick={() => onAddNode?.(template)}
+                      onClick={() => onAddNode?.(template, { x: 0, y: 0 })}
                     >
                       <div className={`p-2 rounded ${template.color}`}>
                         <TemplateIcon className="h-4 w-4" />
