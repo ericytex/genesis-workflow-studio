@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react'
 import { useNodesState, useEdgesState, addEdge, Connection, Edge, Node } from '@xyflow/react'
 import { Toaster } from 'react-hot-toast'
@@ -34,7 +33,11 @@ export function VisualWorkflowBuilder({
     initialWorkflow?.nodes.map(n => ({ ...n, type: n.data.type })) || []
   )
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(
-    initialWorkflow?.edges.map(e => ({ ...e, type: e.type || 'smoothstep', animated: e.animated || true })) || []
+    initialWorkflow?.edges.map(e => ({ 
+      ...e, 
+      type: e.type || 'smoothstep', 
+      animated: e.animated !== false 
+    })) || []
   )
 
   // UI state
@@ -157,7 +160,16 @@ export function VisualWorkflowBuilder({
           updatedAt: new Date().toISOString(),
         },
         nodes: nodes as WorkflowNode[],
-        edges: edges as WorkflowEdge[],
+        edges: edges.map(e => ({
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          type: e.type || 'smoothstep',
+          animated: e.animated !== false,
+          sourceHandle: e.sourceHandle || null,
+          targetHandle: e.targetHandle || null,
+          style: e.style
+        })) as WorkflowEdge[],
       }
 
       if (onSave) {
@@ -200,7 +212,16 @@ export function VisualWorkflowBuilder({
       const workflowData: WorkflowData = {
         meta: workflow,
         nodes: nodes as WorkflowNode[],
-        edges: edges as WorkflowEdge[],
+        edges: edges.map(e => ({
+          id: e.id,
+          source: e.source,
+          target: e.target,
+          type: e.type || 'smoothstep',
+          animated: e.animated !== false,
+          sourceHandle: e.sourceHandle || null,
+          targetHandle: e.targetHandle || null,
+          style: e.style
+        })) as WorkflowEdge[],
       }
 
       if (onExecute) {
@@ -257,7 +278,16 @@ export function VisualWorkflowBuilder({
     const workflowData: WorkflowData = {
       meta: workflow,
       nodes: nodes as WorkflowNode[],
-      edges: edges as WorkflowEdge[],
+      edges: edges.map(e => ({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        type: e.type || 'smoothstep',
+        animated: e.animated !== false,
+        sourceHandle: e.sourceHandle || null,
+        targetHandle: e.targetHandle || null,
+        style: e.style
+      })) as WorkflowEdge[],
     }
 
     const blob = new Blob([JSON.stringify(workflowData, null, 2)], {
