@@ -1,4 +1,5 @@
 
+
 import React, { useState, useCallback, useEffect } from 'react'
 import { useNodesState, useEdgesState, addEdge, Connection, Edge, Node } from '@xyflow/react'
 import { Toaster } from 'react-hot-toast'
@@ -40,8 +41,8 @@ export function VisualWorkflowBuilder({
       target: e.target,
       type: e.type || 'smoothstep', 
       animated: e.animated !== false,
-      sourceHandle: e.sourceHandle,
-      targetHandle: e.targetHandle,
+      sourceHandle: e.sourceHandle || null,
+      targetHandle: e.targetHandle || null,
       style: e.style
     })) || []
   )
@@ -376,3 +377,4 @@ export function VisualWorkflowBuilder({
     </div>
   )
 }
+
