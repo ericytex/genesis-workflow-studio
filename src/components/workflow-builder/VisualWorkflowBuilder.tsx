@@ -1,5 +1,3 @@
-
-
 import React, { useState, useCallback, useEffect } from 'react'
 import { useNodesState, useEdgesState, addEdge, Connection, Edge, Node } from '@xyflow/react'
 import { Toaster } from 'react-hot-toast'
@@ -109,6 +107,20 @@ export function VisualWorkflowBuilder({
     [setEdges, saveToHistory]
   )
 
+  // Helper function to normalize edges for functions that expect stricter types
+  const normalizeEdges = useCallback((edgeArray: Edge[]): WorkflowEdge[] => {
+    return edgeArray.map(e => ({
+      id: e.id,
+      source: e.source,
+      target: e.target,
+      type: e.type || 'smoothstep',
+      animated: e.animated ?? false,
+      sourceHandle: e.sourceHandle || null,
+      targetHandle: e.targetHandle || null,
+      style: e.style
+    }))
+  }, [])
+
   const handleNodeDrop = useCallback(
     (template: NodeTemplate, position: { x: number; y: number }) => {
       const newNode: Node = {
@@ -167,16 +179,7 @@ export function VisualWorkflowBuilder({
           updatedAt: new Date().toISOString(),
         },
         nodes: nodes as WorkflowNode[],
-        edges: edges.map(e => ({
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          type: e.type || 'smoothstep',
-          animated: e.animated !== false,
-          sourceHandle: e.sourceHandle || null,
-          targetHandle: e.targetHandle || null,
-          style: e.style
-        })) as WorkflowEdge[],
+        edges: normalizeEdges(edges),
       }
 
       if (onSave) {
@@ -191,7 +194,7 @@ export function VisualWorkflowBuilder({
     } finally {
       setIsSaving(false)
     }
-  }, [workflow, nodes, edges, onSave])
+  }, [workflow, nodes, edges, normalizeEdges, onSave])
 
   const handleRunWorkflow = useCallback(async () => {
     if (nodes.length === 0) {
@@ -219,16 +222,7 @@ export function VisualWorkflowBuilder({
       const workflowData: WorkflowData = {
         meta: workflow,
         nodes: nodes as WorkflowNode[],
-        edges: edges.map(e => ({
-          id: e.id,
-          source: e.source,
-          target: e.target,
-          type: e.type || 'smoothstep',
-          animated: e.animated !== false,
-          sourceHandle: e.sourceHandle || null,
-          targetHandle: e.targetHandle || null,
-          style: e.style
-        })) as WorkflowEdge[],
+        edges: normalizeEdges(edges),
       }
 
       if (onExecute) {
@@ -279,22 +273,13 @@ export function VisualWorkflowBuilder({
     } finally {
       setIsRunning(false)
     }
-  }, [workflow, nodes, edges, onExecute])
+  }, [workflow, nodes, edges, normalizeEdges, onExecute])
 
   const handleExportWorkflow = useCallback(() => {
     const workflowData: WorkflowData = {
       meta: workflow,
       nodes: nodes as WorkflowNode[],
-      edges: edges.map(e => ({
-        id: e.id,
-        source: e.source,
-        target: e.target,
-        type: e.type || 'smoothstep',
-        animated: e.animated !== false,
-        sourceHandle: e.sourceHandle || null,
-        targetHandle: e.targetHandle || null,
-        style: e.style
-      })) as WorkflowEdge[],
+      edges: normalizeEdges(edges),
     }
 
     const blob = new Blob([JSON.stringify(workflowData, null, 2)], {
@@ -309,7 +294,7 @@ export function VisualWorkflowBuilder({
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
     toast.success('Workflow exported')
-  }, [workflow, nodes, edges])
+  }, [workflow, nodes, edges, normalizeEdges])
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
@@ -377,4 +362,3 @@ export function VisualWorkflowBuilder({
     </div>
   )
 }
-
