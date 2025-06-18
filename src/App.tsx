@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from '@/contexts/AuthContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import Index from '@/pages/Index'
 import Dashboard from '@/pages/Dashboard'
+import WorkflowBuilder from '@/pages/WorkflowBuilder'
 import NotFound from '@/pages/NotFound'
 import './App.css'
 
@@ -48,6 +49,14 @@ function AppRoutes() {
                 <p className="text-muted-foreground">Coming soon...</p>
               </div>
             </div>
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/builder" 
+        element={
+          <ProtectedRoute>
+            <WorkflowBuilder />
           </ProtectedRoute>
         } 
       />

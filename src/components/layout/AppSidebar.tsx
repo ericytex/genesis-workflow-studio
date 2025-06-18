@@ -40,6 +40,11 @@ const navigationItems = [
     icon: Workflow,
   },
   {
+    title: 'Builder',
+    url: '/builder',
+    icon: Plus,
+  },
+  {
     title: 'Settings',
     url: '/settings',
     icon: Settings,
