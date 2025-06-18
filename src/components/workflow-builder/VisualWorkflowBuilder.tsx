@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useEffect } from 'react'
 import { useNodesState, useEdgesState, addEdge, Connection, Edge, Node } from '@xyflow/react'
 import { Toaster } from 'react-hot-toast'
@@ -34,9 +35,14 @@ export function VisualWorkflowBuilder({
   )
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>(
     initialWorkflow?.edges.map(e => ({ 
-      ...e, 
+      id: e.id,
+      source: e.source,
+      target: e.target,
       type: e.type || 'smoothstep', 
-      animated: e.animated !== false 
+      animated: e.animated !== false,
+      sourceHandle: e.sourceHandle,
+      targetHandle: e.targetHandle,
+      style: e.style
     })) || []
   )
 
