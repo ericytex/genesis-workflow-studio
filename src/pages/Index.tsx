@@ -1,10 +1,17 @@
-
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Workflow, Zap, Users, BarChart3, ArrowRight, CheckCircle } from 'lucide-react'
+import { LoginModal } from '@/components/auth/LoginModal'
 
 export default function Index() {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+
+  const handleLoginSuccess = () => {
+    // Navigation will be handled automatically by the ProtectedRoute logic
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       {/* Header */}
@@ -15,8 +22,12 @@ export default function Index() {
             <span className="text-2xl font-bold text-gray-900">Workflow AI</span>
           </div>
           <div className="flex items-center space-x-4">
-            <Button variant="ghost">Sign In</Button>
-            <Button>Get Started</Button>
+            <Button variant="ghost" onClick={() => setIsLoginModalOpen(true)}>
+              Sign In
+            </Button>
+            <Button onClick={() => setIsLoginModalOpen(true)}>
+              Get Started
+            </Button>
           </div>
         </div>
       </header>
@@ -37,7 +48,7 @@ export default function Index() {
             powerful workflows. No coding required.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8">
+            <Button size="lg" className="text-lg px-8" onClick={() => setIsLoginModalOpen(true)}>
               Start Building Free
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -232,6 +243,12 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        onSuccess={handleLoginSuccess}
+      />
     </div>
   )
 }
