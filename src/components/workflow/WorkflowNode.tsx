@@ -29,6 +29,10 @@ export default function WorkflowNode({ data, selected }: NodeProps) {
   const Icon = nodeIcons[data.type as keyof typeof nodeIcons] || Settings
   const colorClass = nodeColors[data.type as keyof typeof nodeColors] || nodeColors.action
 
+  // Safely convert data properties to strings for rendering
+  const nodeLabel = String(data.label || 'Untitled')
+  const nodeDescription = String(data.description || '')
+
   return (
     <Card className={`min-w-[200px] transition-all duration-200 ${
       selected ? 'ring-2 ring-blue-500 shadow-lg' : 'shadow-sm hover:shadow-md'
@@ -40,17 +44,17 @@ export default function WorkflowNode({ data, selected }: NodeProps) {
               <Icon className="h-4 w-4" />
             </div>
             <Badge variant="outline" className="text-xs">
-              {data.type}
+              {String(data.type)}
             </Badge>
           </div>
         </div>
         <CardTitle className="text-sm font-medium leading-tight">
-          {String(data.label || 'Untitled')}
+          {nodeLabel}
         </CardTitle>
       </CardHeader>
       
       <CardContent className="pt-0">
-        <p className="text-xs text-gray-600 mb-2">{String(data.description || '')}</p>
+        <p className="text-xs text-gray-600 mb-2">{nodeDescription}</p>
         
         {/* Configuration preview */}
         {data.config && Object.keys(data.config).length > 0 && (
