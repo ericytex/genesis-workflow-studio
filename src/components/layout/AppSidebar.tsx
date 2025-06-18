@@ -12,9 +12,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarProvider,
-  SidebarTrigger,
-  useSidebar,
 } from '@/components/ui/sidebar'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,6 +25,8 @@ import {
   Sparkles
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { ThemeToggle } from '@/components/ui/theme-toggle'
+import { LLMSettings } from '@/components/ui/llm-settings'
 
 const navigationItems = [
   {
@@ -102,6 +101,16 @@ export function AppSidebar() {
                 )
               })}
             </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarGroup>
+          <SidebarGroupLabel>Preferences</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <div className="px-2 space-y-1">
+              <ThemeToggle />
+              <LLMSettings />
+            </div>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
